@@ -155,7 +155,8 @@ while True:
 
         rawdata  = '{"temperature":' + str(Sensors.temperature) + ', "pressure":' + str(Sensors.pressure)+ ', "humidity":'+ str(Sensors.humidity)+', "run-time":'+ str(State.run_time)+'}'
 
-        writes ['rawdata'] = rawdata
+        writes = {}
+        writes['rawdata'] = rawdata
 
         # send current states up to Murano
         try:
