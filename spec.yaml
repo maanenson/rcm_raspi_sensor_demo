@@ -1,0 +1,7 @@
+resources:
+-   alias: rawdata
+    format: string
+-   alias: meta
+    format: string
+-   alias: events
+    format: string
