@@ -61,8 +61,9 @@ e,e,e,e,e,w,e,e
 # create object for getting Sense Hat sensor data
 sense = SenseHat()
 sense.low_light = True
-sense.show_message("Starting...", text_colour=x,back_colour=e)
-sense.set_pixels(image2)
+#sense.show_message("Starting...", text_colour=x,back_colour=e)
+#sense.set_pixels(image2)
+sense.clear()
 
 # create a murano object for the device
 murano = Murano(PRODUCT_ID, DEVICE_ID)
@@ -153,10 +154,10 @@ while True:
 
         print_state()
 
-        rawdata  = '{"temperature":' + str(Sensors.temperature) + ', "pressure":' + str(Sensors.pressure)+ ', "humidity":'+ str(Sensors.humidity)+', "run-time":'+ str(State.run_time)+'}'
+        rawdata  = '{"temperature":' + str(Sensors.temperature) + ', "pressure":' + str(Sensors.pressure)+ ', "humidity":'+ str(Sensors.humidity)+', "runtime":'+ str(State.run_time)+'}'
 
         writes = {}
-        writes['rawdata'] = rawdata
+        writes['raw_data'] = rawdata
 
         # send current states up to Murano
         try:
