@@ -6,9 +6,7 @@ import datetime
 import grovepi
 from grove_rgb_lcd import *
 
-
 sensor = 7
-
 
 from murano import Murano
 import requests
@@ -102,6 +100,8 @@ while True:
     if time.time() - last_sensor_time > 10:
 
         now = datetime.datetime.utcnow()
+        temp = 0.01
+        hum = 0.01
         [temp,humidity] = grovepi.dht(sensor,1)
         light=int(grovepi.analogRead(0)/10.24)
         sound=int(grovepi.analogRead(1)/10.24)
@@ -113,18 +113,26 @@ while True:
         Sensors.humidity = round(humidity, 1)
         Sensors.sound = round(sound, 1)
 
-        #setRGB(0,128,64)
+        setRGB(0,128,64)
         setRGB(0,255,0)
         setText("Temp:" + str(temp) + "C      " + "Humidity :" + str(humidity) + "%")
 
-        rawdata  = '{"temperature":' + str(Sensors.temperature) + ', "sound":' + str(Sensors.sound) + ', "light":' + str(Sensors.light)+ ', "humidity":'+ str(Sensors.humidity)+', "runtime":'+ str(State.run_time)+'}'
+        rawdata = json.dumps(Sensors)
+        #rawdata  = '{'
+        #+ '"temperature":' + str(Sensors.temperature)
+        #+ ', "sound":' + str(Sensors.sound)
+        #+ ', "light":' + str(Sensors.light)
+        #+ ', "humidity":'+ str(Sensors.humidity)
+        #+', "runtime":'+ str(State.run_time)
+        #+'}'
 
         writes = {}
         writes['raw_data'] = rawdata
+        print(writes)
 
         # send current states up to Murano
         try:
-            murano.write(writes)
+            #murano.write(writes)
         except requests.exceptions.RequestException as e:
             print str(e)
             last_sensor_time = time.time()
