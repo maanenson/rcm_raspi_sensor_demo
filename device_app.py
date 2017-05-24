@@ -82,7 +82,7 @@ while True:
 
         light=int(grovepi.analogRead(0)/10.24)
         sound=int(grovepi.analogRead(1)/10.24)
-        print("light = %.02f sound =%.02f%"%(light, sound))
+        print("light = %.02f sound = %.02f "%(light, sound))
 
 
         temp = 0.01
