@@ -77,34 +77,26 @@ while True:
     if time.time() - last_sensor_time > 10:
 
         now = datetime.datetime.utcnow()
+        data = {}
+        data['runtime'] = run_time
+
+        light=int(grovepi.analogRead(0)/10.24)
+        sound=int(grovepi.analogRead(1)/10.24)
+        print("light = %.02f sound =%.02f%"%(light, sound))
+
+
         temp = 0.01
         hum = 0.01
         [temp,humidity] = grovepi.dht(sensor,blue)
-        light=int(grovepi.analogRead(0)/10.24)
-        sound=int(grovepi.analogRead(1)/10.24)
-
-        #print(temp,humidity,light,sound)
         if math.isnan(temp) == False and math.isnan(humidity) == False:
-            print("temp = %.02f C humidity =%.02f%%"%(temp, humidity))
-
-        print("light = %.02f sound =%.02f%%"%(light, sound))
+            print("temp = %.02f C humidity = %.02f%%"%(temp, humidity))
+            data['temperature'] = temp
+            data['humidity'] = humidity
 
         setRGB(65,196,220)
-        #setRGB(0,255,0)
-        setText("Temp:" + str(temp) + "C" + "\nHumidity :" + str(humidity) + "%")
-
-        data = {}
-
-        data['runtime'] = run_time
+        setText_norefresh("Temp:" + str(temp) + "C" + "\nHumidity :" + str(humidity) + "%")
 
         rawdata = json.dumps(data)
-        #rawdata  = '{'
-        #+ '"temperature":' + str(Sensors.temperature)
-        #+ ', "sound":' + str(Sensors.sound)
-        #+ ', "light":' + str(Sensors.light)
-        #+ ', "humidity":'+ str(Sensors.humidity)
-        #+', "runtime":'+ str(State.run_time)
-        #+'}'
 
         writes = {}
         writes['raw_data'] = rawdata
@@ -112,7 +104,7 @@ while True:
 
         # send current states up to Murano
         try:
-            #murano.write(writes)
+            murano.write(writes)
             print(writes)
         except requests.exceptions.RequestException as e:
             print str(e)
