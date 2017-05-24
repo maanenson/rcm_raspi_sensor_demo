@@ -99,7 +99,7 @@ while True:
             data['humidity'] = humidity
 
         setRGB(65,196,220)
-        display_string = str("Temp: %3.02f C \nHumidity: %3.01f %"%(temp, humidity))
+        display_string = str("Temp: %3.02f C \nHumidity: %3.01f %%"%(temp, humidity))
         setText_norefresh(display_string)
 
         rawdata = json.dumps(data)
