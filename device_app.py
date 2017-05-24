@@ -89,7 +89,7 @@ while True:
 
         print("light = %.02f sound =%.02f%%"%(light, sound))
 
-        setRGB(0,128,64)
+        setRGB(65,196,220)
         #setRGB(0,255,0)
         setText("Temp:" + str(temp) + "C" + "\nHumidity :" + str(humidity) + "%")
 
