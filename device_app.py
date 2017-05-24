@@ -74,7 +74,7 @@ while True:
     run_time = int(time.time())-start_time
 
     # TIME TO SEND PERIODIC SENSOR DATA
-    if time.time() - last_sensor_time > 10:
+    if time.time() - last_sensor_time > period_sensor_time:
 
         now = datetime.datetime.utcnow()
         data = {}
@@ -97,7 +97,7 @@ while True:
             print("temp = %.02f C humidity = %.02f%%"%(temp, humidity))
             data['temperature'] = temp
             data['humidity'] = humidity
-        
+
         setRGB(65,196,220)
         setText_norefresh("Temp:" + str(temp) + "C" + "\nHumidity :" + str(humidity) + "%")
 
@@ -113,6 +113,7 @@ while True:
             print(writes)
         except requests.exceptions.RequestException as e:
             print str(e)
-            last_sensor_time = time.time()
+
+        last_sensor_time = time.time()
 
     time.sleep(0.2);
