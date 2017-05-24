@@ -4,6 +4,7 @@ import time
 import json
 import datetime
 import grovepi
+import math
 from grove_rgb_lcd import *
 
 sensor = 7 #DHT Sensor Digital Port
@@ -23,7 +24,6 @@ DEVICE_ID = sys.argv[2]  # '001'
 
 def show_state():
     print('Product ID: {0} Device ID: {1}'.format(PRODUCT_ID, DEVICE_ID))
-
 
 
 # create a murano object for the device
