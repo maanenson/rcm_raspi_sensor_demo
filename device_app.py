@@ -165,7 +165,7 @@ while True:
             sense.set_pixel(0,7,g) #set pixel to medium blue if ok
         except requests.exceptions.RequestException as e:
             sense.set_pixel(0,7,[255,146,30]) #set pixel to orange if having issues
-            print e
+            print str(e)
         last_sensor_time = time.time()
 
 
