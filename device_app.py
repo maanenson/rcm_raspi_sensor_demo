@@ -128,14 +128,14 @@ while True:
 
         writes = {}
         writes['raw_data'] = rawdata
-        print(writes)
+
 
         # send current states up to Murano
         try:
             #murano.write(writes)
+            print(writes)
         except requests.exceptions.RequestException as e:
             print str(e)
             last_sensor_time = time.time()
-
 
     time.sleep(0.2);
