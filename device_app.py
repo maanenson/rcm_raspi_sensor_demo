@@ -6,7 +6,9 @@ import datetime
 import grovepi
 from grove_rgb_lcd import *
 
-sensor = 7
+sensor = 7 #DHT Sensor Digital Port
+blue = 0 #DHT Sensor Color
+white = 1 #DHT Sensor Color
 
 from murano import Murano
 import requests
@@ -77,16 +79,19 @@ while True:
         now = datetime.datetime.utcnow()
         temp = 0.01
         hum = 0.01
-        [temp,humidity] = grovepi.dht(sensor,1)
+        [temp,humidity] = grovepi.dht(sensor,blue)
         light=int(grovepi.analogRead(0)/10.24)
         sound=int(grovepi.analogRead(1)/10.24)
 
-        print(temp,humidity,light,sound)
+        #print(temp,humidity,light,sound)
+        if math.isnan(temp) == False and math.isnan(humidity) == False:
+            print("temp = %.02f C humidity =%.02f%%"%(temp, humidity))
 
+        print("light = %.02f sound =%.02f%%"%(light, sound))
 
         setRGB(0,128,64)
-        setRGB(0,255,0)
-        setText("Temp:" + str(temp) + "C      " + "Humidity :" + str(humidity) + "%")
+        #setRGB(0,255,0)
+        setText("Temp:" + str(temp) + "C" + "\nHumidity :" + str(humidity) + "%")
 
         data = {}
 
