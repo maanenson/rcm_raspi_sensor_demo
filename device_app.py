@@ -2,8 +2,13 @@
 import sys
 import time
 import json
-#from pi_stats import PiStats
-from sense_hat import SenseHat
+import datetime
+import grovepi
+from grove_rgb_lcd import *
+
+
+sensor = 7
+
 
 from murano import Murano
 import requests
@@ -15,62 +20,14 @@ if len(sys.argv) < 3:
 PRODUCT_ID = sys.argv[1] # 'do5pjwoazfsf9a4i'
 DEVICE_ID = sys.argv[2]  # '001'
 
+
 def show_state():
     print('Product ID: {0} Device ID: {1}'.format(PRODUCT_ID, DEVICE_ID))
 
 
-w = [255,255,255] # White
-ww = [220,220,220] # slightly grey
-x = [65,196,220] #Exosite Blue
-a = [92,93,96] #Exosite Grey
-d = [34,39,54] #Exosite Dark Blue
-xx = [44,157,182] #Exosite Medium Blue
-
-r = [255,0,0]
-o = [255,127,0]
-y = [255,255,0]
-g = [0,255,0]
-b = [0,0,255]
-i = [75,0,130]
-v = [159,0,255]
-e = [0,0,0]
-
-
-image = [
-d,d,w,d,d,x,d,d,
-d,w,w,ww,x,x,xx,d,
-d,w,w,ww,x,x,xx,d,
-d,d,w,w,d,xx,d,d,
-d,d,d,d,w,w,d,d,
-d,d,d,d,w,w,ww,d,
-d,d,d,d,w,w,ww,d,
-d,d,d,d,d,w,d,d
-]
-
-image2 = [
-e,e,w,e,e,x,e,e,
-e,w,w,ww,x,x,xx,e,
-e,w,w,ww,x,x,xx,e,
-e,e,w,w,e,xx,e,e,
-e,e,e,e,w,w,e,e,
-e,e,e,e,w,w,ww,e,
-e,e,e,e,w,w,ww,e,
-e,e,e,e,e,w,e,e
-]
-
-# create object for getting Sense Hat sensor data
-sense = SenseHat()
-sense.low_light = True
-#sense.show_message("Starting...", text_colour=x,back_colour=e)
-#sense.set_pixels(image2)
-sense.clear()
 
 # create a murano object for the device
 murano = Murano(PRODUCT_ID, DEVICE_ID)
-
-# create object for getting local device stats
-#stats = PiStats()
-
 
 
 # Get the device key (CIK)
@@ -81,6 +38,7 @@ except EnvironmentError:
     # no stored CIK, so activate
     cik = murano.activate()
     print('Activated device to obtain CIK')
+
 
 # initialize the device state of of Pi
 class State:
@@ -93,8 +51,9 @@ class State:
 class Sensors:
     temperature = 0
     humidity = 0
-    pressure = 0
-    x,y,z = 0,0,0
+    sound = 0
+    light = 0
+
 
 
 #stats.update_stats()
@@ -116,7 +75,6 @@ def print_state():
     print('pressure:        {0}'.format(Sensors.pressure))
     print('---------------------------------')
 
-print('Waiting for lock commands from Murano')
 print('Press Ctrl+C to quit')
 timestamp = None
 
@@ -142,19 +100,24 @@ while True:
 
     # TIME TO SEND PERIODIC SENSOR DATA
     if time.time() - last_sensor_time > 10:
-        sense.set_pixel(0,7,d) #set pixel to dark blue
 
-        t = sense.get_temperature()
-        p = sense.get_pressure()
-        h = sense.get_humidity()
+        now = datetime.datetime.utcnow()
+        [temp,humidity] = grovepi.dht(sensor,1)
+        light=int(grovepi.analogRead(0)/10.24)
+        sound=int(grovepi.analogRead(1)/10.24)
 
-        Sensors.temperature = round(t, 1)
-        Sensors.pressure = round(p, 1)
-        Sensors.humidity = round(h, 1)
+        print(temp,humidity,light,sound)
 
-        print_state()
+        Sensors.temperature = round(temp, 1)
+        Sensors.light = round(light, 1)
+        Sensors.humidity = round(humidity, 1)
+        Sensors.sound = round(sound, 1)
 
-        rawdata  = '{"temperature":' + str(Sensors.temperature) + ', "pressure":' + str(Sensors.pressure)+ ', "humidity":'+ str(Sensors.humidity)+', "runtime":'+ str(State.run_time)+'}'
+        #setRGB(0,128,64)
+        setRGB(0,255,0)
+        setText("Temp:" + str(temp) + "C      " + "Humidity :" + str(humidity) + "%")
+
+        rawdata  = '{"temperature":' + str(Sensors.temperature) + ', "sound":' + str(Sensors.sound) + ', "light":' + str(Sensors.light)+ ', "humidity":'+ str(Sensors.humidity)+', "runtime":'+ str(State.run_time)+'}'
 
         writes = {}
         writes['raw_data'] = rawdata
@@ -162,11 +125,9 @@ while True:
         # send current states up to Murano
         try:
             murano.write(writes)
-            sense.set_pixel(0,7,g) #set pixel to medium blue if ok
         except requests.exceptions.RequestException as e:
-            sense.set_pixel(0,7,[255,146,30]) #set pixel to orange if having issues
             print str(e)
-        last_sensor_time = time.time()
+            last_sensor_time = time.time()
 
 
     time.sleep(0.2);
