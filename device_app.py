@@ -113,7 +113,7 @@ while True:
             murano.write(writes)
             print(writes)
         except requests.exceptions.RequestException as e:
-            print str(e)
+            print 'execption'
 
         last_sensor_time = time.time()
 
