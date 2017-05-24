@@ -86,6 +86,10 @@ while True:
         data['light'] = light
         data['sound'] = sound
 
+        analogdial=int(grovepi.analogRead(2)/10.24)
+        print("analogdial = %.02f %% "%(analogdial))
+        data['analogdial'] = analogdial
+
         temp = 0.01
         hum = 0.01
         [temp,humidity] = grovepi.dht(sensor,blue)
@@ -93,7 +97,7 @@ while True:
             print("temp = %.02f C humidity = %.02f%%"%(temp, humidity))
             data['temperature'] = temp
             data['humidity'] = humidity
-
+        
         setRGB(65,196,220)
         setText_norefresh("Temp:" + str(temp) + "C" + "\nHumidity :" + str(humidity) + "%")
 
