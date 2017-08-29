@@ -24,7 +24,7 @@ class Murano():
     def __init__(self, product_id, device_id):
         self.product_id = product_id
         self.device_id = device_id
-        self.product_url = 'https://' + product_id + '.m2.exosite.com'
+        self.product_url = 'https://' + product_id + '.m2.exosite.io'
         self.filename = 'product-{0}-device-{1}.secret'.format(
             self.product_id,
             self.device_id)
